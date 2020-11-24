@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>biz</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script>
+    <script src="https://unpkg.com/vue-router@2.0.0/dist/vue-router.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" name="viewport">
+    <link href="https://fonts.googleapis.com/css?family=Nanum+Gothic" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" rel="stylesheet">
+    <link href="../css/biz.css?2020-01-20" rel="stylesheet">
+</head>
+<body>
+<div id="app">
+    <nav-bar></nav-bar>
+<header></header>
+
+<main>
+    <h2>파트너</h2>
+
+    <form class="form-inline" @submit.prevent="handleSubmit">
+        <input type="hidden" name="limit">
+        <input type="hidden" name="offset">
+        <select name="field" v-model="field">
+            <option value="partner_id">ID</option>
+            <option value="partner_name">이름</option>
+            <option value="partner_key">휴대폰</option>
+            <option value="sales_md_member_id">영업담당자 이메일</option>
+            <option value="sales_md_member_name">영업담당자 이름</option>
+            <option value="support_md_member_id">지원담당자 이메일</option>
+            <option value="support_md_member_name">지원담당자 이름</option>
+            <option value="intro">소개</option>
+            <option value="partner_score1">파트너 점수1</option>
+            <option value="partner_score2">파트너 점수2</option>
+            <option value="partner_score3">파트너 점수3</option>
+            <option value="terms_agree_time">계약 동의시간</option>
+            <option value="marketing_agree_time">마케팅 수신 동의시간</option>
+            <option value="privacy_agree_time">개인정보제공 동의시간</option>
+            <option value="insert_time">입력시각</option>
+            <option value="update_time">최종수정</option>
+        </select>
+        <input type="text" name="keyword" v-model="keyword">
+        <button type="button" class="submit" @click="handleSubmit">확인</button>
+    </form>
+
+    <div class="tbl-responsive">
+        <table class="tbl">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>이름</th>
+                <th>입력시각</th>
+                <th>최종수정</th>
+                <th>영업 담당 직원</th>
+                <th>지원 담당 직원</th>
+                <th>파트너 지역</th>
+                <th>파트너 서비스</th>
+                <th>파트너 로그인</th>
+                <th>보기/수정</th>
+                <th>삭제</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr v-for="partner in partners">
+                    <td>{{partner.partner_id}}</td>
+                    <td>{{partner.partner_name}}</td>
+                    <td>{{partner.insert_time | toKST }}</td>
+                    <td>{{partner.update_time | toKST}}</td>
+                    <td>{{partner.sales_md_member_name}}</td>
+                    <td>{{partner.support_md_member_name}}</td>
+                    <td><a :href="`partner_area_index.html?limit=20&offset=0&field=partner_id&keyword=${partner.partner_id}`">파트너 지역</a></td>
+                    <td><a :href="`partner_service_index.html?limit=20&offset=0&field=partner_id&keyword=${partner.partner_id}`">파트너 서비스</a></td>
+                    <td><a :href="`/biz/partner/admin_partner_login?partner_id=${partner.partner_id}&partner_name=${partner.partner_name}`" target="_blank">파트너로 로그인</a></td>
+                    <td><a :href="`partner_form.html?partner_id=${partner.partner_id}`">보기/수정</a></td>
+                    <td><button @click="deletePartner(partner.partner_id)">삭제</button></td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="pagination">
+            <button @click="handlePrevClick" v-show="offset > 1">
+                이전
+            </button>
+            <button @click="handleNextClick" v-show="partners.length >= limit">
+                다음
+            </button>
+        </p>
+    </div>
+
+</main>
+<footer></footer>
+
+<div class="msg-container"></div>
+</div>
+</body>
+
+<script src="../js/cfg.js?2020-01-20"></script>
+<script src="../js/vue/components.js"></script>
+<script src="../js/vue/router.js"></script>
+<script src="../js/vue/filters.js"></script>
+<script>
+
+const app = new Vue({
+  router,
+  el: '#app',
+  data() {
+    return {
+      field: this.$route.query.field || 'partner_id',
+      keyword: this.$route.query.keyword || '',
+      limit: parseInt(this.$route.query.limit) || 20,
+      offset: parseInt(this.$route.query.offset) || 0,
+      partners: []
+    }
+  },
+  async created() {
+    await this.loadPartners()
+  },
+  watch: {
+    async '$route.query'(value) { // 브라우저 뒤로가기 앞으로가기 버튼 감지용
+      this.offset = parseInt(value.offset) || 0
+      this.limit = parseInt(value.limit) || 20
+      this.field = value.field
+      this.keyword = value.keyword
+      await this.loadPartners()
+    }
+  },
+  methods: {
+    async loadPartners() {
+      const {field, keyword, offset, limit} = this
+      const {data} = await axios.post(baseURL + '/biz/partner/select', {
+        field,
+        keyword,
+        limit,
+        offset,
+      })
+      if (data.err !== 0){
+            alert(data.msg)
+            window.location.href = data.url
+        }
+      else{
+      this.partners = data.data
+      this.$router.push({query: {...this.$route.query, offset, field, limit, keyword}})
+      }
+    },
+    async handleNextClick() {
+      this.offset = this.offset + this.limit + 1
+      await this.loadPartners()
+    },
+    async handlePrevClick() {
+      this.offset = this.offset - this.limit - 1
+      await this.loadPartners()
+    },
+    async handleSubmit() {
+        this.offset = 0
+        await this.loadPartners()
+    },
+      async deletePartner(partner_id){
+          if(confirm("삭제 하시겠습니까?")) {
+              await axios.post(baseURL + '/biz/partner/delete', {'partner_id': partner_id})
+              window.location.reload()
+          }
+      }
+
+  }
+})
+</script>
+</html>
