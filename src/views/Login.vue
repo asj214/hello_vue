@@ -31,7 +31,7 @@
 import axios from 'axios'
 
 export default {
-  name: "login",
+  name: 'login',
   data() {
     return {
       email: null,

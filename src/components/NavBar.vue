@@ -9,7 +9,7 @@
                 <!-- Left Side Of Navbar -->
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a href="/posts" class="nav-link">posts</a>
+                        <router-link :to="{ name: 'posts' }" class="nav-link">posts</router-link>
                     </li>
                 </ul>
                 <!-- Right Side Of Navbar -->

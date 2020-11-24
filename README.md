@@ -1,5 +1,9 @@
 # hello_vue
 
+## spec  
+- node version: v12.19.0  
+
+
 ## Project setup
 ```
 npm install
