@@ -31,31 +31,17 @@
 import axios from 'axios'
 
 export default {
-  name: 'login',
-  data() {
-    return {
-      email: null,
-      password: null
-    };
-  },
-  methods: {
-    async onSubmit(email, password) {
-        const {data} = await axios.post('http://dev-laravel.sjahn.gtz.kr/api/user/login', {
-            email,
-            password
-        })
-
-        console.log(data);
-        /*
-        if (data.err !== 0){
-            alert(data.msg)
-            window.location.href = data.url
-        } else {
-            console.log('test');
-        }
-        */
+    name: 'login',
+    data() {
+        return {
+            email: null,
+            password: null
+        };
     },
-    
-  },
+    methods: {
+        async onSubmit(email, password) {
+            console.log('test')
+        },
+    },
 };
 </script>
