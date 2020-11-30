@@ -10,25 +10,28 @@ const service = axios.create({
 })
 
 // before request
-service.interceptors.request.use(config => {
-    return config
-}, error => {
-    console.log(error)
-    Promise.reject(error)
-})
+service.interceptors.request.use(
+    config => {
+        return config
+    }, error => {
+        console.log(error)
+        Promise.reject(error)
+    }
+)
 
 service.interceptors.response.use(
-response => {
-    const res = response.data
-    if (res.code !== 0) {
-        console.log(res.msg)
-    } else {
-        return res
+    response => {
+        const res = response.data
+        if (res.code !== 0) {
+            console.log(res.msg)
+        } else {
+            return res
+        }
+    }, error => {
+        console.log('err' + error)
+        return Promise.reject(error)
     }
-}, error => {
-    console.log('err' + error)
-    return Promise.reject(error)
-})
+)
 
 const ApiService = {
     init () {

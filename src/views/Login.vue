@@ -28,8 +28,6 @@
     </div>
 </template>
 <script>
-import axios from 'axios'
-
 export default {
     name: 'login',
     data() {
@@ -40,7 +38,13 @@ export default {
     },
     methods: {
         async onSubmit(email, password) {
-            console.log('test')
+            let credentials = {
+                email: email,
+                password: password
+            }
+            this.$store.dispatch('LOGIN', credentials).then((res) => {
+                console.log(res)
+            })
         },
     },
 };
