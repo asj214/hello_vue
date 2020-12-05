@@ -32,8 +32,8 @@ export default {
     name: 'login',
     data() {
         return {
-            email: null,
-            password: null
+            email: "abc123@abc.com",
+            password: "password"
         };
     },
     methods: {
@@ -43,7 +43,9 @@ export default {
                 password: password
             }
             this.$store.dispatch('LOGIN', credentials).then((res) => {
-                console.log(res)
+                if (res.status == 200) {
+                    this.$router.push({ name: 'home' })
+                }
             })
         },
     },

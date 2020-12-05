@@ -13,9 +13,8 @@
                     </li>
                 </ul>
                 <!-- Right Side Of Navbar -->
-                <ul class="navbar-nav ml-auto">
+                <ul class="navbar-nav ml-auto" v-if="!this.$store.state.isAuthenticated">
                     <!-- Authentication Links -->
-
                     <li class="nav-item">
                         <router-link
                         :to="{ name: 'login' }"
@@ -26,12 +25,22 @@
                         </router-link>
                     </li>
                 </ul>
+                <ul class="navbar-nav ml-auto" v-else>
+                    <li class="nav-item">
+                        <a class="nav-link" @click.prevent="logout()">logout</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 </template>
 <script>
 export default {
-  name: 'NavBar'
+    name: 'NavBar',
+    methods: {
+        logout() {
+            console.log('logout')
+        }
+    }
 }
 </script>

@@ -1,9 +1,9 @@
 import Vue from 'vue'
+import '@/common/api.service'
 import App from '@/App.vue'
 import router from '@/router'
 import VueRouter from 'vue-router'
 import store from '@/store'
-import ApiService from '@/common/api.service'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -17,7 +17,16 @@ Vue.use(IconsPlugin)
 
 Vue.config.productionTip = false
 
-ApiService.init()
+const authentication = () => {
+  const accessToken = localStorage.getItem('accessToken')
+  if (accessToken) {
+    Vue.axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
+    store.dispatch('USER')
+    // store.commit('SET_DATA', accessToken)
+  }
+}
+
+authentication()
 
 new Vue({
   router,

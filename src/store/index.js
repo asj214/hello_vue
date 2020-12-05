@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import ApiService from '@/common/api.service'
 
 
 Vue.use(Vuex)
@@ -20,27 +19,37 @@ export default new Vuex.Store({
 
     },
     mutations: {
-        LOGIN (state, { accessToken }) {
+        SET_AUTH (state, accessToken) {
             state.accessToken = accessToken
-            // 토큰을 로컬 스토리지에 저장
+            // local storage
             localStorage.setItem('accessToken', accessToken)
+        },
+        SET_USER (state, user) {
+            state.isAuthenticated = true
+            state.user.id = user.id
+            state.user.name = user.name
+            state.user.email = user.email
         },
         SET_ERROR (state, error) {
             state.errors = error
         }
-        // SET_AUTH (state, credentials) {
-        //     state.isAuthenticated = true
-        //     state.accessToken = 
-        // }
     },
     actions: {
-        LOGIN (context, credentials) {
-            return new Promise((resolve) => {
-                ApiService.post('auth/login', credentials).then(({ data }) => {
-                    context.commit('LOGIN', data.access_token)
-                    resolve(data)
-                })
-            })
+        async LOGIN ({ commit }, credentials) {
+            const res = await Vue.axios.post('auth/login', credentials)
+            let accessToken = res.data.access_token || null
+            if (accessToken) {
+                // header
+                Vue.axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
+                // mutation
+                commit('SET_AUTH', accessToken)
+            }
+            return res
+        },
+        async USER ({ commit }) {
+            const res = await Vue.axios.get('auth/me')
+            commit('SET_USER', res.data.user)
+            return res.data
         }
     }
 })

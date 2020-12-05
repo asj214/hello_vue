@@ -14,7 +14,7 @@ const routes = [
         name: 'login',
         path: '/login',
         component: () => import('@/views/Login')
-    },
+    }
 ]
 
 const router = new VueRouter({
