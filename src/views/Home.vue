@@ -11,6 +11,21 @@
 </template>
 <script>
 export default {
-  name: 'home'
+  name: 'home',
+  data() {
+    return {
+        banners: []
+    }
+  },
+  created() {
+    this.getBanners()
+  },
+  methods: {
+    getBanners() {
+        this.axios.get('banners', { params: { category_id: 1 } }).then((res) => {
+            this.banners = res.data.banners
+        })
+    }
+  }
 };
 </script>

@@ -1,7 +1,7 @@
 <template>
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-md-6 col-xs-12" v-for="( post, index ) in posts" :key="index" @click.prevent="goDetail(post.id)">
+            <div class="col-md-3 col-xs-12" v-for="( post, index ) in posts" :key="index" @click.prevent="goDetail(post.id)">
                 <div class="card mb-4">
                     <div class="carousel">
                         <img :src="post.attachments[0].url" class="card-img-top" />
