@@ -44,6 +44,7 @@ export default {
             }
             this.$store.dispatch('LOGIN', credentials).then((res) => {
                 if (res.status == 200) {
+                    this.$store.dispatch('USER')
                     this.$router.push({ name: 'home' })
                 }
             })

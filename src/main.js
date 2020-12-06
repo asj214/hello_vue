@@ -7,7 +7,15 @@ import store from '@/store'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+import { far } from '@fortawesome/free-regular-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
+library.add(fas)
+library.add(far)
+
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.use(VueRouter)
 // Install BootstrapVue
@@ -22,7 +30,6 @@ const authentication = () => {
   if (accessToken) {
     Vue.axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
     store.dispatch('USER')
-    // store.commit('SET_DATA', accessToken)
   }
 }
 

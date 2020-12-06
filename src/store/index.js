@@ -30,6 +30,14 @@ export default new Vuex.Store({
             state.user.name = user.name
             state.user.email = user.email
         },
+        LOGOUT (state) {
+            state.isAuthenticated = false
+            state.user.id = null
+            state.user.name = null
+            state.user.email = null
+            state.accessToken = null
+            localStorage.removeItem('accessToken')
+        },
         SET_ERROR (state, error) {
             state.errors = error
         }
@@ -45,6 +53,11 @@ export default new Vuex.Store({
                 commit('SET_AUTH', accessToken)
             }
             return res
+        },
+        async LOGOUT ({ commit }) {
+            await Vue.axios.get('auth/logout')
+            Vue.axios.defaults.headers.common['Authorization'] = null
+            commit('LOGOUT')
         },
         async USER ({ commit }) {
             const res = await Vue.axios.get('auth/me')

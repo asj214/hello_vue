@@ -9,7 +9,7 @@
                 <!-- Left Side Of Navbar -->
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <router-link :to="{ name: 'posts' }" class="nav-link">posts</router-link>
+                        <router-link :to="{ name: 'postList' }" class="nav-link">posts</router-link>
                     </li>
                 </ul>
                 <!-- Right Side Of Navbar -->
@@ -25,11 +25,12 @@
                         </router-link>
                     </li>
                 </ul>
-                <ul class="navbar-nav ml-auto" v-else>
-                    <li class="nav-item">
-                        <a class="nav-link" @click.prevent="logout()">logout</a>
-                    </li>
-                </ul>
+                <b-navbar-nav class="ml-auto" v-else>
+                    <b-nav-item-dropdown :text="$store.state.user.name" right>
+                        <b-dropdown-item href="#">MyPage</b-dropdown-item>
+                        <b-dropdown-item @click.prevent="logout()">Logout</b-dropdown-item>
+                    </b-nav-item-dropdown>
+                </b-navbar-nav>
             </div>
         </div>
     </nav>
@@ -39,7 +40,7 @@ export default {
     name: 'NavBar',
     methods: {
         logout() {
-            console.log('logout')
+            this.$store.dispatch('LOGOUT')
         }
     }
 }
