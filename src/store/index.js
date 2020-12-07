@@ -55,7 +55,7 @@ export default new Vuex.Store({
             return res
         },
         async LOGOUT ({ commit }) {
-            await Vue.axios.get('auth/logout')
+            await Vue.axios.delete('auth/logout')
             Vue.axios.defaults.headers.common['Authorization'] = null
             commit('LOGOUT')
         },
