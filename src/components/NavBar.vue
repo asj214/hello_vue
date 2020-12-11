@@ -1,41 +1,24 @@
 <template>
-  <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+  <b-navbar toggleable="lg" type="light" variant="light">
     <div class="container">
-      <a class="navbar-brand" href="/">Hello Vue</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <!-- Left Side Of Navbar -->
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <router-link :to="{ name: 'postList' }" class="nav-link">posts</router-link>
-          </li>
-        </ul>
-        <!-- Right Side Of Navbar -->
-        <ul class="navbar-nav ml-auto" v-if="!this.$store.state.isAuthenticated">
-          <!-- Authentication Links -->
-          <li class="nav-item">
-            <router-link :to="{ name: 'login' }" exact class="nav-link">login</router-link>
-          </li>
-        </ul>
+      <b-navbar-brand href="#" :to="{ name: 'home' }">Hello Vue</b-navbar-brand>
+      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+      <b-collapse id="nav-collapse" is-nav>
+        <b-navbar-nav class="mr-auto">
+          <b-nav-item href="#" :to="{ name: 'postList' }">Posts</b-nav-item>
+        </b-navbar-nav>
+        <b-navbar-nav class="ml-auto" v-if="!this.$store.state.isAuthenticated">
+          <b-nav-item href="#" :to="{ name: 'login' }">Login</b-nav-item>
+        </b-navbar-nav>
         <b-navbar-nav class="ml-auto" v-else>
           <b-nav-item-dropdown :text="$store.state.user.name" right>
             <b-dropdown-item href="#">MyPage</b-dropdown-item>
             <b-dropdown-item @click.prevent="logout()">Logout</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
-      </div>
+      </b-collapse>
     </div>
-  </nav>
+  </b-navbar>
 </template>
 <script>
 export default {
