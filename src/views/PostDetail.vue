@@ -3,7 +3,7 @@
     <div class="row justify-content-center">
       <div class="col-md-8">
         <div class="card">
-          <img :src="post.attachments[0].url" class="card-img-top" v-if="post.attachments[0].url" />
+          <img :src="attachments[0].url" class="card-img-top img-fluid" v-if="attachments.length > 0" />
           <div class="card-body">
             <h5 class="card-title">{{ post.title }}</h5>
             <p class="card-text">{{ post.body }}</p>
@@ -33,7 +33,6 @@
               <button type="button" class="btn btn-block btn-light btn-outline-secondary" @click.prevent="commentCreate">작성</button>
             </form>
           </div>
-
           <div class="card-body" v-if="this.post.comments">
             <ul class="list-unstyled">
               <li class="media my-4" v-for="(comment, index) in this.post.comments" :key="index">
@@ -64,7 +63,7 @@
               </li>
             </ul>
           </div>
-
+          <!-- end card body -->
         </div>
       </div>
     </div>
@@ -84,7 +83,8 @@ export default {
       faCommentDots,
       current_user_id: this.$store.state.user.id,
       postId: this.$route.params.id,
-      post: [],
+      post: null,
+      attachments: [],
       commentBody: ''
     }
   },
@@ -96,8 +96,9 @@ export default {
       this.$router.push({ path: `/posts` })
     },
     getPostDetail () {
-      this.axios.get(`/posts/${this.postId}`, {}).then((res) => {
+      this.axios.get(`/posts/${this.postId}`).then((res) => {
         this.post = res.data.post
+        this.attachments = res.data.post.attachments
       })
     },
     isContentsOwner (user_id) {

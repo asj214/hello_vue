@@ -21,6 +21,11 @@ const routes = [
     component: () => import('@/views/PostList')
   },
   {
+    name: 'postForm',
+    path: '/posts/create',
+    component: () => import('@/views/PostForm')
+  },
+  {
     name: 'postDetail',
     path: '/posts/:id',
     component: () => import('@/views/PostDetail')

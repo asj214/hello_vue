@@ -3,16 +3,16 @@
     <div class="row justify-content-center">
       <div class="col-md-10">
         <div class="text-right">
-          <a href="#" class="btn btn-outline-primary" @click.prevent="goWrite">Write</a>
+          <router-link :to="{ path: '/posts/create' }" class="btn btn-outline-primary">Write</router-link>
         </div>
         <div>
           <div v-for="(post, index) in posts" :key="index">
             <hr>
             <div class="row">
-              <div class="col-sm-4">
+              <div class="col-sm-4" v-if="post.attachments.length > 0">
                 <img :src="post.attachments[0].url" class="img-fluid">
               </div>
-              <div class="col-sm-8">
+              <div :class="post.attachments.length > 0 ? 'col-sm-8': 'col-sm-12'">
                 <h3 class="title">
                   <a href="#" @click.prevent="goDetail(post.id)">{{ post.title }}</a>
                 </h3>
