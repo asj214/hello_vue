@@ -3,7 +3,7 @@
     <div class="row justify-content-center">
       <div class="col-md-8">
         <div class="card">
-          <img src="https://via.placeholder.com/800x600" class="card-img-top" />
+          <img :src="post.attachments[0].url" class="card-img-top" v-if="post.attachments[0].url" />
           <div class="card-body">
             <h5 class="card-title">{{ post.title }}</h5>
             <p class="card-text">{{ post.body }}</p>
@@ -15,10 +15,12 @@
               <a href="#" class="card-link text-danger" v-if="isContentsOwner(post.user_id)">Delete</a>
             </div>
             <div class="float-right">
-              <a href="#">
+              <span class="color-link">
                 <font-awesome-icon :icon="faCommentDots" />&nbsp;{{ post.comments_count }}
+              </span>
+              <a href="#">
+                <font-awesome-icon :icon="faHeart" />&nbsp;0
               </a>
-              <a href="#"><font-awesome-icon :icon="faHeart" />&nbsp;0 </a>
             </div>
           </div>
           <hr />
@@ -31,10 +33,11 @@
               <button type="button" class="btn btn-block btn-light btn-outline-secondary" @click.prevent="commentCreate">작성</button>
             </form>
           </div>
+
           <div class="card-body" v-if="this.post.comments">
             <ul class="list-unstyled">
               <li class="media my-4" v-for="(comment, index) in this.post.comments" :key="index">
-                <a href="#">
+                <a href="#" @click.prevent="false">
                   <img src="https://via.placeholder.com/64" class="mr-3 rounded-circle" />
                 </a>
                 <div class="media-body">
@@ -61,14 +64,15 @@
               </li>
             </ul>
           </div>
+
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
-import { faHeart, faCommentDots } from "@fortawesome/free-regular-svg-icons"
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faHeart, faCommentDots } from '@fortawesome/free-regular-svg-icons'
 
 export default {
   components: {
@@ -118,3 +122,8 @@ export default {
   },
 };
 </script>
+<style>
+.color-link {
+  color: #007bff
+}
+</style>

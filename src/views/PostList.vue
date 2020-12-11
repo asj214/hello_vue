@@ -8,17 +8,19 @@
         <div>
           <div v-for="(post, index) in posts" :key="index">
             <hr>
-            <div class="row" @click.prevent="goDetail(post.id)">
+            <div class="row">
               <div class="col-sm-4">
                 <img :src="post.attachments[0].url" class="img-fluid">
               </div>
               <div class="col-sm-8">
-                <h3 class="title">{{ post.title }}</h3>
+                <h3 class="title">
+                  <a href="#" @click.prevent="goDetail(post.id)">{{ post.title }}</a>
+                </h3>
                 <p class="text-muted">{{ post.user.name }} - {{ post.created_at | moment('YYYY.MM.DD') }}</p>
                 <p class="text-justify">{{ post.body }}</p>
                 <div class="text-right">
-                  <span class="mr-1"><font-awesome-icon :icon="faHeart" />&nbsp;0</span>
-                  <span><font-awesome-icon :icon="faCommentDots" />&nbsp;{{ post.comments_count }}</span>
+                  <span class="mr-1 color-link"><font-awesome-icon :icon="faHeart" />&nbsp;0</span>
+                  <span class="color-link"><font-awesome-icon :icon="faCommentDots" />&nbsp;{{ post.comments_count }}</span>
                 </div>
               </div>
             </div>
@@ -98,5 +100,7 @@ export default {
 };
 </script>
 <style>
-.thumb { width: 200px; }
+.color-link {
+  color: #007bff
+}
 </style>
