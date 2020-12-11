@@ -1,38 +1,46 @@
 <template>
   <div class="container mt-5">
     <div class="row justify-content-center">
-      <div
-        class="col-md-3 col-xs-12"
-        v-for="(post, index) in posts"
-        :key="index"
-        @click.prevent="goDetail(post.id)"
-      >
-        <div class="card mb-4">
-          <div class="carousel">
-            <img :src="post.attachments[0].url" class="card-img-top" />
+      <div class="col-md-10">
+        <div class="text-right">
+          <a href="#" class="btn btn-outline-primary" @click.prevent="goWrite">Write</a>
+        </div>
+        <div>
+          <div v-for="(post, index) in posts" :key="index">
+            <hr>
+            <div class="row" @click.prevent="goDetail(post.id)">
+              <div class="col-sm-4">
+                <img :src="post.attachments[0].url" class="img-fluid">
+              </div>
+              <div class="col-sm-8">
+                <h3 class="title">{{ post.title }}</h3>
+                <p class="text-muted">{{ post.user.name }} - {{ post.created_at | moment('YYYY.MM.DD') }}</p>
+                <p class="text-justify">{{ post.body }}</p>
+                <div class="text-right">
+                  <span class="mr-1"><font-awesome-icon :icon="faHeart" />&nbsp;0</span>
+                  <span><font-awesome-icon :icon="faCommentDots" />&nbsp;{{ post.comments_count }}</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="card-body">
-            <h5 class="card-title">
-              <a href="#">{{ post.title }}</a>
-            </h5>
-            <p class="card-text">{{ post.body }}</p>
-          </div>
-          <div class="card-body custom-box">
-            <a href="#">
-              <font-awesome-icon :icon="faCommentDots" />&nbsp;{{
-                post.comments_count
-              }}
-            </a>
-            <a href="#"> <font-awesome-icon :icon="faHeart" />&nbsp;0 </a>
-          </div>
+        </div>
+        <hr>
+        <div>
+          <nav aria-label="Page navigation example">
+            <ul class="pagination">
+              <li class="page-item" v-for="(p, k) in paginate.total_pages" :key="k" :class="{ active: p === page }">
+                <a href="#" class="page-link" @click.prevent="p !== page ? handlePageMove(p): null">{{ p }}</a>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faHeart, faCommentDots } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
+import { faHeart, faCommentDots } from "@fortawesome/free-regular-svg-icons"
 
 export default {
   components: {
@@ -42,27 +50,53 @@ export default {
     return {
       faHeart,
       faCommentDots,
-      page: 1,
+      page: parseInt(this.$route.query.page) || 1,
+      per_page: parseInt(this.$route.query.per_page) || 5,
       category_id: 2,
       posts: [],
+      paginate: {}
     };
   },
   created() {
-    this.getPostList();
+    this.getPostList()
+  },
+  watch: {
+    '$route.query' (query) {
+      this.page = parseInt(query.page) || 1
+      this.per_page = parseInt(query.per_page) || 5
+      this.getPostList()
+    }
   },
   methods: {
-    getPostList() {
+    getPostList () {
       let params = {
         category_id: this.category_id,
         page: this.page,
-      };
+        per_page: this.per_page
+      }
       this.axios.get("posts", { params: params }).then((res) => {
-        this.posts = res.data.posts;
-      });
+        this.posts = res.data.posts
+        this.paginate = res.data.meta.pagination
+      })
     },
-    goDetail(id) {
-      this.$router.push({ path: `/posts/${id}` });
+    goWrite () {
+      console.log('Go Write')
     },
+    goDetail (id) {
+      this.$router.push({ path: `/posts/${id}` })
+    },
+    handlePageMove (page) {
+      this.page = parseInt(page)
+      this.$router.push({
+        query: {
+          page: parseInt(page),
+          per_page: this.per_page
+        }
+      })
+    }
   },
 };
 </script>
+<style>
+.thumb { width: 200px; }
+</style>
