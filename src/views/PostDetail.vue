@@ -1,11 +1,12 @@
 <template>
   <div class="container mt-5">
     <div class="row justify-content-center">
-      <div class="col-md-8">
+      <div class="col-md-6">
         <div class="card">
           <img :src="attachments[0].url" class="card-img-top img-fluid" v-if="attachments.length > 0" />
           <div class="card-body">
             <h5 class="card-title">{{ post.title }}</h5>
+            <span class="text-muted mb-2">{{ post.created_at | moment('YYYY.MM.DD') }}</span>
             <p class="card-text">{{ post.body }}</p>
           </div>
           <div class="card-body">
@@ -123,8 +124,3 @@ export default {
   },
 };
 </script>
-<style>
-.color-link {
-  color: #007bff
-}
-</style>
