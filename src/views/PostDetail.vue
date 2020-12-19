@@ -7,7 +7,12 @@
           <div class="card-body">
             <h5 class="card-title">{{ post.title }}</h5>
             <div class="mb-2">
-              <span class="text-muted">{{ post.created_at | moment('YYYY.MM.DD') }}</span>
+              <span class="text-muted">
+                <b-icon icon="calendar3"></b-icon> {{ post.created_at | moment('YYYY.MM.DD') }}
+              </span>
+              <small class="text-muted">
+                <b-icon icon="person-fill"></b-icon> {{ post.user.name }}
+              </small>
             </div>
             <p class="card-text">{{ post.body }}</p>
           </div>
@@ -84,7 +89,9 @@ export default {
         id: null,
         title: '',
         body: '',
-        user: null,
+        user: {
+          name: ''
+        },
         comments_count: 0,
         likes_count: 0,
         created_at: '1988-02-14',
@@ -123,18 +130,24 @@ export default {
       })
     },
     commentCreate () {
-      let params = { body: this.commentBody }
-      this.axios.post(`/posts/${this.postId}/comments`, params).then((res) => {
+      let params = {
+        commentable_type: 'posts',
+        commentable_id: this.postId,
+        body: this.commentBody
+      }
+      this.axios.post('/comments', params).then((res) => {
         if (res.status === 200) {
           this.commentBody = ''
-          this.post = res.data.post
+          this.post.comments_count += 1
+          this.commentLists()
         }
       })
     },
     commentDestroy (commentId) {
-      this.axios.delete(`/posts/${this.postId}/comments/${commentId}`).then((res) => {
+      this.axios.delete(`/comments/${commentId}`).then((res) => {
         if (res.status === 200) {
-          this.post = res.data.post
+          this.post.comments_count -= 1
+          this.commentLists()
         }
       })
     },
