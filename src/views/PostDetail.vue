@@ -6,7 +6,9 @@
           <img :src="attachments[0].url" class="card-img-top img-fluid" v-if="attachments.length > 0" />
           <div class="card-body">
             <h5 class="card-title">{{ post.title }}</h5>
-            <span class="text-muted mb-2">{{ post.created_at | moment('YYYY.MM.DD') }}</span>
+            <div class="mb-2">
+              <span class="text-muted">{{ post.created_at | moment('YYYY.MM.DD') }}</span>
+            </div>
             <p class="card-text">{{ post.body }}</p>
           </div>
           <div class="card-body">
@@ -17,10 +19,10 @@
             </div>
             <div class="float-right">
               <span class="color-link">
-                <font-awesome-icon :icon="faCommentDots" />&nbsp;{{ post.comments_count }}
+                <b-icon icon="chat-dots"></b-icon> {{ post.comments_count }}
               </span>
-              <a href="#">
-                <font-awesome-icon :icon="faHeart" />&nbsp;0
+              <a href="#" @click.prevent="likeAction('posts', post.id)">
+                <b-icon icon="heart"></b-icon> {{ post.likes_count }}
               </a>
             </div>
           </div>
@@ -34,9 +36,9 @@
               <button type="button" class="btn btn-block btn-light btn-outline-secondary" @click.prevent="commentCreate">작성</button>
             </form>
           </div>
-          <div class="card-body" v-if="this.post.comments">
+          <div class="card-body" v-if="this.comments">
             <ul class="list-unstyled">
-              <li class="media my-4" v-for="(comment, index) in this.post.comments" :key="index">
+              <li class="media my-4" v-for="(comment, index) in this.comments" :key="index">
                 <a href="#" @click.prevent="false">
                   <img src="https://via.placeholder.com/64" class="mr-3 rounded-circle" />
                 </a>
@@ -51,12 +53,12 @@
                       <a href="#" class="btn btn-link" @click.prevent="commentDestroy(comment.id)">Delete</a>
                     </div>
                   </div>
-                  <br />
+                  <br style="clear:both;">
                   <p>{{ comment.body }}</p>
                   <div class="media-body">
                     <div class="float-right">
-                      <a href="#">
-                        <font-awesome-icon :icon="faHeart" />&nbsp;0
+                      <a href="#" @click.prevent="likeAction('comments', comment.id)">
+                        <b-icon icon="heart"></b-icon> {{ comment.likes_count }}
                       </a>
                     </div>
                   </div>
@@ -71,21 +73,24 @@
   </div>
 </template>
 <script>
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faHeart, faCommentDots } from '@fortawesome/free-regular-svg-icons'
-
 export default {
   components: {
-    FontAwesomeIcon,
   },
   data() {
     return {
-      faHeart,
-      faCommentDots,
       current_user_id: this.$store.state.user.id,
       postId: this.$route.params.id,
-      post: null,
+      post: {
+        id: null,
+        title: '',
+        body: '',
+        user: null,
+        comments_count: 0,
+        likes_count: 0,
+        created_at: '1988-02-14',
+      },
       attachments: [],
+      comments: [],
       commentBody: ''
     }
   },
@@ -96,31 +101,58 @@ export default {
     goPostList () {
       this.$router.push({ path: `/posts` })
     },
-    getPostDetail () {
-      this.axios.get(`/posts/${this.postId}`).then((res) => {
+    async getPostDetail () {
+      await this.axios.get(`/posts/${this.postId}`).then((res) => {
         this.post = res.data.post
+        this.comments = res.data.post.comments
         this.attachments = res.data.post.attachments
       })
     },
     isContentsOwner (user_id) {
       return user_id === this.current_user_id
     },
+    commentLists () {
+      let params = {
+        commentable_id: this.postId,
+        commentable_type: 'posts'
+      }
+      this.axios.get('/comments', { params: params }).then((res) => {
+        if (res.status === 200) {
+          this.comments = res.data.comments
+        }
+      })
+    },
     commentCreate () {
       let params = { body: this.commentBody }
       this.axios.post(`/posts/${this.postId}/comments`, params).then((res) => {
         if (res.status === 200) {
           this.commentBody = ''
-          this.getPostDetail()
+          this.post = res.data.post
         }
       })
     },
     commentDestroy (commentId) {
       this.axios.delete(`/posts/${this.postId}/comments/${commentId}`).then((res) => {
         if (res.status === 200) {
-          this.getPostDetail()
+          this.post = res.data.post
+        }
+      })
+    },
+    likeAction (likeable, id) {
+      let params = {
+        likeable_type: likeable,
+        likeable_id: id
+      }
+      this.axios.post(`/likes`, params).then((res) => {
+        if (res.status === 200) {
+          if (likeable === 'posts') {
+            this.post.likes_count += 1
+          } else if (likeable == 'comments') {
+            this.commentLists()
+          }
         }
       })
     }
-  },
-};
+  }
+}
 </script>
